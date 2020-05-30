@@ -1,0 +1,26 @@
+name: create PR
+
+on:
+  push:
+    branches:
+      - development
+    tags:
+      - release*
+      - v1.*
+
+jobs:
+  createPR:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest version
+        uses: actions/checkout@v2
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
+
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+
