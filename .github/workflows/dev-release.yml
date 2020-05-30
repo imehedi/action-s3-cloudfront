@@ -1,0 +1,27 @@
+name: tag latest commit
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - nameL Checkout the latest version
+        uses: actions/checkout@v2
+
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v2
+        with:
+          token: ${{secrets.github_token}}
+
+      - name: tag current version
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.buildnumber.outputs.build_number }}"
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
