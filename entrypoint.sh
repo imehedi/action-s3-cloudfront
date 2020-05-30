@@ -20,3 +20,14 @@ sh -c "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
        AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}  \
        aws s3 sync ${SOURCE_DIR:-.} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
         $*"
+
+if [[ "$CLOUDFRONT_INVALIDATE" == "true" && -z "$DISTRIBUTION" ]]; then
+  echo "error: DISTRIBUTION is not set"
+  err=1
+fi
+
+sh -c "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+       AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}  \
+       aws cloudfront create-invalidation \
+       --distribution-id ${DISTRIBUTION} \
+       --paths ${CF_PATH}  $*"
