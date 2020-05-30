@@ -1,5 +1,5 @@
 name: "action-s3-cloudfront"
-description: "A GitHub action to sync with S3 and trigger Cloudfront invalidation"
+description: "A GitHub action to sync to S3 & trigger Cloudfront invalidation"
 author: imehedi
 
 inputs:
