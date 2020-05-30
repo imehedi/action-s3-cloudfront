@@ -6,7 +6,17 @@ on:
       - development
 
 jobs:
+  performLinting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest version
+        uses: actions/checkout@v2
+
+      - name: lint yaml
+        uses: ibiqlik/action-yamllint@master
+
   createRelease:
+    needs: performLinting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the latest version
