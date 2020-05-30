@@ -23,7 +23,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: "v${{ steps.buildnumber.outputs.build_number }}"
-          prerelease: true
+          prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
