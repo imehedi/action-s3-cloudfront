@@ -1,0 +1,44 @@
+---
+name: tag latest commit
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  performLinting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest version
+        uses: actions/checkout@v2
+
+      - name: lint yaml
+        uses: ibiqlik/action-yamllint@master
+
+  createRelease:
+    needs: performLinting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest version
+        uses: actions/checkout@v2
+
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v2
+        with:
+          token: ${{secrets.github_token}}
+
+      - name: tag current version
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.buildnumber.outputs.build_number }}"
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR
+        uses: funivan/github-autopr@0.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: .head_commit.message .*#pr.*

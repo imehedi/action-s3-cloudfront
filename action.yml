@@ -1,0 +1,32 @@
+name: "action-s3-cloudfront"
+description: "A GitHub action to sync to S3 & trigger Cloudfront invalidation"
+author: imehedi
+
+inputs:
+  AWS_ACCESS_KEY_ID:
+    description: 'AWS Access Key id '
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: 'AWS Access Key secret'
+    required: true
+  AWS_S3_BUCKET:
+    description: 'S3 Bucket which you want to sync to'
+    required: true
+  CLOUDFRONT_INVALIDATE:
+    description: 'Optional param to indicate whether to invalidate cloudfront'
+    required: false
+    default: false
+  DISTRIBUTION:
+    description: 'Cloudfront Distribution ID'
+    required: false
+    default: false
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.$AWS_ACCESS_KEY_ID }}
+    - ${{ inputs.$AWS_SECRET_ACCESS_KEY }}
+    - ${{ inputs.$AWS_S3_BUCKET }}
+    - ${{ inputs.$CLOUDFRONT_INVALIDATE }}
+    - ${{ inputs.$DISTRIBUTION }}
