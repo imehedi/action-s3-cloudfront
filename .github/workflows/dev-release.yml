@@ -9,7 +9,7 @@ jobs:
   createRelease:
     runs-on: ubuntu-latest
     steps:
-      - nameL Checkout the latest version
+      - name: Checkout the latest version
         uses: actions/checkout@v2
 
       - name: Generate build number
