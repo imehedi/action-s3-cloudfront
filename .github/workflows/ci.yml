@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # shellcheck and pipx are preinstalled on GitHub's Ubuntu runners.
+      - name: shellcheck
+        run: shellcheck entrypoint.sh
+
+      - name: yamllint
+        run: pipx run yamllint -d relaxed .
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: build the image
+        run: docker build -t action-s3-cloudfront .
+
+      - name: check the CLI inside the image
+        run: docker run --rm --entrypoint aws action-s3-cloudfront --version
+
+      - name: check a missing bucket is refused
+        run: |
+          if docker run --rm action-s3-cloudfront; then
+            echo "expected the action to fail without AWS_S3_BUCKET" >&2
+            exit 1
+          fi

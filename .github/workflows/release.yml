@@ -1,0 +1,26 @@
+name: release
+
+# Push a version tag (git tag v6 && git push origin v6) to publish a release.
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: build the image
+        run: docker build -t action-s3-cloudfront .
+
+      - name: create release
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+
+      - name: move the latest tag
+        uses: EndBug/latest-tag@v1

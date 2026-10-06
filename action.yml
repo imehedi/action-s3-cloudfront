@@ -1,32 +1,46 @@
 name: "action-s3-cloudfront"
 description: "A GitHub action to sync to S3 & trigger Cloudfront invalidation"
 author: imehedi
+branding:
+  icon: 'upload-cloud'
+  color: 'orange'
 
+# Every input can also be given as an environment variable of the same name,
+# as in earlier versions. Defaults are applied in entrypoint.sh, so that an
+# input left out here does not hide a value given through `env:`.
 inputs:
-  AWS_ACCESS_KEY_ID:
-    description: 'AWS Access Key id '
-    required: true
-  AWS_SECRET_ACCESS_KEY:
-    description: 'AWS Access Key secret'
-    required: true
   AWS_S3_BUCKET:
-    description: 'S3 Bucket which you want to sync to'
-    required: true
+    description: 'S3 bucket to sync to (required, here or as env)'
+    required: false
+  SOURCE_DIR:
+    description: 'Local directory to upload (default: the repository root)'
+    required: false
+  DEST_DIR:
+    description: 'Prefix inside the bucket to sync to (default: the bucket root)'
+    required: false
+  AWS_REGION:
+    description: 'AWS region (default: eu-west-1)'
+    required: false
   CLOUDFRONT_INVALIDATE:
-    description: 'Optional param to indicate whether to invalidate cloudfront'
+    description: 'true to invalidate the CloudFront distribution after the sync (default: false)'
     required: false
-    default: false
   DISTRIBUTION:
-    description: 'Cloudfront Distribution ID'
+    description: 'CloudFront distribution ID; required when CLOUDFRONT_INVALIDATE is true'
     required: false
-    default: false
+  CF_PATHS:
+    description: "Space-separated paths to invalidate (default: '/*')"
+    required: false
+  AWS_ACCESS_KEY_ID:
+    description: 'Access key ID. Prefer OIDC via aws-actions/configure-aws-credentials and leave this unset'
+    required: false
+  AWS_SECRET_ACCESS_KEY:
+    description: 'Secret access key. Prefer OIDC via aws-actions/configure-aws-credentials and leave this unset'
+    required: false
+
+outputs:
+  invalidation_id:
+    description: 'ID of the CloudFront invalidation, when one was created'
 
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - ${{ inputs.AWS_ACCESS_KEY_ID }}
-    - ${{ inputs.AWS_SECRET_ACCESS_KEY }}
-    - ${{ inputs.AWS_S3_BUCKET }}
-    - ${{ inputs.CLOUDFRONT_INVALIDATE }}
-    - ${{ inputs.DISTRIBUTION }}
