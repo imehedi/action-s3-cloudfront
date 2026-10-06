@@ -22,8 +22,9 @@ fail() {
 access_key_id="$(setting AWS_ACCESS_KEY_ID)"
 secret_access_key="$(setting AWS_SECRET_ACCESS_KEY)"
 if [ -n "$access_key_id" ] || [ -n "$secret_access_key" ]; then
-  [ -n "$access_key_id" ] && [ -n "$secret_access_key" ] \
-    || fail "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be given together"
+  if [ -z "$access_key_id" ] || [ -z "$secret_access_key" ]; then
+    fail "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be given together"
+  fi
   echo "::add-mask::$secret_access_key"
   export AWS_ACCESS_KEY_ID="$access_key_id"
   export AWS_SECRET_ACCESS_KEY="$secret_access_key"
